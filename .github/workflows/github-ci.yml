@@ -1,0 +1,55 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    services:
+      # Define services needed for the test environment
+      cassandra:
+        image: cassandra:latest
+        ports:
+          - 9042:9042
+        options: --health-cmd="cqlsh -e 'describe cluster'" --health-interval=10s --health-timeout=5s --health-retries=5
+      webapp:
+        image: nginx:latest
+        ports:
+          - 80:80
+      db:
+        image: node:14-slim
+        ports:
+          - 3001:3001
+          - 3002:3002
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install Dependencies
+        working-directory: ./server1
+        run: npm install
+      - name: Install Dependencies for Server 2
+        working-directory: ./server2
+        run: npm install
+
+      - name: Run Tests on Server 1
+        working-directory: ./server1
+        run: npm test
+
+      - name: Run Tests on Server 2
+        working-directory: ./server2
+        run: npm test

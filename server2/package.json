@@ -1,0 +1,14 @@
+{
+  "name": "server2",
+  "version": "1.0.0",
+  "description": "Server 2 for load balancing",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "cassandra-driver": "^4.7.2",
+    "express": "^4.17.1",
+    "node-cache": "^5.1.2"
+  }
+}
